@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pi API Integration - JereTech Solutions</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            transition: background 0.3s, color 0.3s;
+        }
+        .container {
+            text-align: center;
+            background: linear-gradient(135deg, #9370db, #8a2be2);
+            border-radius: 10px;
+            padding: 20px 40px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        h1 {
+            margin-bottom: 20px;
+            font-size: 2.5em;
+        }
+        p {
+            margin-bottom: 20px;
+            font-size: 1.2em;
+        }
+        button {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            color: #ffffff;
+            transition: transform 0.2s ease-in-out;
+        }
+        .btn-purple {
+            background-color: #9370db;
+        }
+        .btn-dark {
+            background-color: #8a2be2;
+        }
+        .btn-toggle {
+            background-color: #444;
+        }
+        button:hover {
+            transform: scale(1.1);
+        }
+        .dark-mode {
+            background-color: #121212;
+            color: #ffffff;
+        }
+        .light-mode {
+            background-color: #ffffff;
+            color: #000000;
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container">
+        <h1>Pi API Integration</h1>
+        <p>JereTech Solutions</p>
+        <button id="loginBtn" class="btn-purple">Login with Pi</button>
+        <button id="paymentBtn" class="btn-dark">Make Payment</button>
+        <button id="toggleMode" class="btn-toggle">Toggle Dark Mode</button>
+        <button id="downloadPDF" class="btn-purple">Download Privacy Policy (PDF)</button>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+    <script>
+        const loginBtn = document.getElementById('loginBtn');
+        const paymentBtn = document.getElementById('paymentBtn');
+        const toggleMode = document.getElementById('toggleMode');
+        const downloadPDF = document.getElementById('downloadPDF');
+        const body = document.body;
+
+        // Toggle Dark Mode
+        toggleMode.addEventListener('click', () => {
+            if (body.classList.contains('dark-mode')) {
+                body.classList.replace('dark-mode', 'light-mode');
+            } else {
+                body.classList.replace('light-mode', 'dark-mode');
+            }
+        });
+
+        // Login functionality
+        loginBtn.addEventListener('click', () => {
+            fetch('/api/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: 'user123', password: 'password123' })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.success ? 'Login successful!' : 'Login failed. Please try again.');
+            })
+            .catch(error => {
+                console.error('Error during login:', error);
+                alert('An error occurred while logging in.');
+            });
+        });
+
+        // Payment functionality
+        paymentBtn.addEventListener('click', () => {
+            fetch('/api/payment', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ amount: 100, currency: 'USD' })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.success ? 'Payment successful!' : 'Payment failed. Please try again.');
+            })
+            .catch(error => {
+                console.error('Error during payment:', error);
+                alert('An error occurred while processing the payment.');
+            });
+        });
+
+        // PDF Download functionality
+        downloadPDF.addEventListener('click', () => {
+            const privacyPolicy = `
+                Privacy Policy for Pi API Integration
+
+                Last Updated: ${new Date().toLocaleDateString()}
+                
+                At JereTech Solutions, we are committed to protecting your privacy. 
+                This Privacy Policy explains how we collect, use, store, and share your data.
+                
+                1. Information We Collect:
+                   - Username, Password (encrypted), Payment Details.
+                   - Device information, Usage data.
+
+                2. How We Use Your Information:
+                   - Authentication, Payment Processing, Improving Services, Security.
+
+                3. Sharing Your Information:
+                   - We do not sell data. Shared only with trusted service providers or if legally required.
+
+                4. Data Security:
+                   - Encryption, Secure Storage, Regular Audits.
+
+                5. Your Rights:
+                   - Access, Correction, Deletion, Opt-Out.
+
+                6. Cookies and Tracking:
+                   - Used for session management and analytics.
+
+                7. Children's Privacy:
+                   - Not intended for individuals under 18.
+
+                8. Contact Us:
+                   - Email: support@jeretech.com
+                   - Website: https://www.jeretech.com
+
+                Thank you for trusting JereTech Solutions.
+            `;
+
+            const element = document.createElement("div");
+            element.textContent = privacyPolicy;
+            html2pdf().from(element).save('PrivacyPolicy.pdf');
+        });
+    </script>
+</body>
+</html>
